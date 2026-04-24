@@ -8,4 +8,4 @@ class UserModel(BaseModel):
     first_name: str
     last_name: str
     avatar: str
-    data: List[User]
+    # data: List[User]

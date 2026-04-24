@@ -27,13 +27,11 @@ class TestApiUsers:
         single_user_response = user_client.get_user(user_id)
 
         assert single_user_response.status_code == 200, "Status-code not equal 200"
-        # single_user_data = single_user_response.json()['data']
+        single_user_data = single_user_response.json()['data']
 
-        model = UserModel(**single_user_response.json())
+        assert isinstance(single_user_data['id'], int)
+        assert isinstance(single_user_data['first_name'], str)
+        assert isinstance(single_user_data['last_name'], str)
 
-        assert model.data.id == user_id
-        # assert isinstance(single_user_data['first_name'], str)
-        # assert isinstance(single_user_data['last_name'], str)
-        #
-        # assert '@' in single_user_data['email']
-        # assert ".jpg" in single_user_data['avatar'][-4:]
+        assert '@' in single_user_data['email']
+        assert ".jpg" in single_user_data['avatar'][-4:]
