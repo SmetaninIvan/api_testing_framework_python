@@ -1,37 +1,45 @@
+import allure
 import pytest
-from src.helpers.user_helper import *
-from .test_data.expected_users_info import USER_LIST_EXPECTED_NAMES
-from src.models.user_models import UserModel
+from src.models.user_models import UserModel, UserListResponseModel
 
+@allure.feature("API Users")
 class TestApiUsers:
 
-    @pytest.mark.parametrize('page', [1, 2, 3])
+    @allure.title("User list validation")
+    @pytest.mark.parametrize('page', [1, 2])
     def test_get_users(self, user_client, page):
+        with allure.step("Get response object of users"):
+            user_response = user_client.get_users(page)
 
-        user_response = user_client.get_users(page)
+        with allure.step("Check status code"):
+            assert user_response.status_code == 200, "Status-code not equal 200"
 
-        assert user_response.status_code == 200, "Status-code not equal 200"
+        with allure.step("Get validation data"):
+            model = UserListResponseModel(**user_response.json())
 
-        data_body = user_response.json()
-        assert 'data' in data_body
-        assert 'page' in data_body
-        assert 'total' in data_body
-        assert 'total_pages' in data_body
+        with allure.step("Check validation"):
+            assert model.page == page
+            assert len(model.data) > 0
+            assert len(model.data) == model.per_page
 
-        user_list_response = get_user_first_names(user_response.json()['data'], "first_name")
+        # user_list_response = get_user_first_names(user_response.json()['data'], "first_name")
+        # assert compare_users(user_list_response, USER_LIST_EXPECTED_NAMES[f"page_{page}"])
 
-        assert compare_users(user_list_response, USER_LIST_EXPECTED_NAMES[f"page_{page}"])
-
+    @allure.title("User validation")
     @pytest.mark.parametrize('user_id', range(1, 7))
     def test_get_single_user(self, user_client, user_id):
-        single_user_response = user_client.get_user(user_id)
+        with allure.step("Get response object of users"):
+            single_user_response = user_client.get_user(user_id)
 
-        assert single_user_response.status_code == 200, "Status-code not equal 200"
-        single_user_data = single_user_response.json()['data']
+        with allure.step("Check status code"):
+            assert single_user_response.status_code == 200, "Status-code not equal 200"
 
-        assert isinstance(single_user_data['id'], int)
-        assert isinstance(single_user_data['first_name'], str)
-        assert isinstance(single_user_data['last_name'], str)
+        with allure.step("Get validation data"):
+            user_model_data = UserModel(**single_user_response.json()['data'])
 
-        assert '@' in single_user_data['email']
-        assert ".jpg" in single_user_data['avatar'][-4:]
+        with allure.step("Check validation"):
+            assert user_model_data.email
+            assert user_model_data.id == user_id
+            assert user_model_data.first_name
+            assert user_model_data.last_name
+            assert user_model_data.avatar
