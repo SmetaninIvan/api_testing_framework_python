@@ -16,5 +16,3 @@ class UserListResponseModel(BaseModel):
     total: int
     total_pages: int
     data: List[UserModel]
-    # support: dict
-    # _meta: dict
