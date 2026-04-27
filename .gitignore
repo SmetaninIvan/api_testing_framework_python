@@ -166,3 +166,7 @@ $RECYCLE.BIN/
 *.swo
 *~
 .netrwhist
+
+# Allure
+allure-results/
+allure-report/

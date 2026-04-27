@@ -2,6 +2,7 @@ import allure
 import pytest
 from src.models.user_models import UserModel, UserListResponseModel
 
+
 @allure.feature("API Users")
 class TestApiUsers:
 
@@ -21,9 +22,6 @@ class TestApiUsers:
             assert model.page == page
             assert len(model.data) > 0
             assert len(model.data) == model.per_page
-
-        # user_list_response = get_user_first_names(user_response.json()['data'], "first_name")
-        # assert compare_users(user_list_response, USER_LIST_EXPECTED_NAMES[f"page_{page}"])
 
     @allure.title("User validation")
     @pytest.mark.parametrize('user_id', range(1, 7))
